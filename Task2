@@ -1,0 +1,9 @@
+e=int(input('English '))
+m=int(input('Maths '))
+o=int(input('Operating System '))
+c=int(input('CFN '))
+c=int(input('C-Programing '))
+total=e+m+o+c+c
+per=(total/500.0)*100
+print('Total Marks={}'.format(total))
+print('Percentage={:.2f}'.format(per))
