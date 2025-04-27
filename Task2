@@ -1,30 +1,260 @@
-print("Enter Marks Obtained in 5 Subjects: ")
-English = int(input())
-Maths = int(input())
-OperatingSystem = int(input())
-CFN = int(input())
-Python = int(input())
+import tkinter as tk
+from tkinter import messagebox
 
-tot = English+Maths+OperatingSystem+CFN+Python
-avg = tot/5
+# Function to add subject and marks to the list
+def add_subject():
+    subject = subject_entry.get()
+    marks = marks_entry.get()
+    total_marks = total_marks_entry.get()
 
-if avg>=91 and avg<=100:
-    print("Your Grade is A1")
-elif avg>=81 and avg<91:
-    print("Your Grade is A2")
-elif avg>=71 and avg<81:
-    print("Your Grade is B1")
-elif avg>=61 and avg<71:
-    print("Your Grade is B2")
-elif avg>=51 and avg<61:
-    print("Your Grade is C1")
-elif avg>=41 and avg<51:
-    print("Your Grade is C2")
-elif avg>=33 and avg<41:
-    print("Your Grade is D")
-elif avg>=21 and avg<33:
-    print("Your Grade is E1")
-elif avg>=0 and avg<21:
-    print("Your Grade is E2")
-else:
-    print("Invalid Input!")
+    if not subject or not marks or not total_marks:
+        messagebox.showerror("Input Error", "Please provide subject, marks, and total marks")
+        return
+
+    try:
+        marks = float(marks)
+        total_marks = float(total_marks)
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid marks and total marks")
+        return
+
+    # Add subject, obtained marks, and total marks to the listbox
+    subject_listbox.insert(tk.END, f"{subject}: {marks}/{total_marks}")
+    subjects.append(subject)
+    obtained_marks.append(marks)
+    total_marks_list.append(total_marks)
+
+    # Clear the entry fields
+    subject_entry.delete(0, tk.END)
+    marks_entry.delete(0, tk.END)
+    total_marks_entry.delete(0, tk.END)
+
+# Function to remove a selected subject and its marks
+def remove_subject():
+    try:
+        selected_index = subject_listbox.curselection()[0]
+        subject_listbox.delete(selected_index)
+        del subjects[selected_index]
+        del obtained_marks[selected_index]
+        del total_marks_list[selected_index]
+    except IndexError:
+        messagebox.showerror("Selection Error", "Please select a subject to remove")
+
+# Function to calculate the total percentage
+def calculate_percentage():
+    if not subjects:
+        messagebox.showerror("Input Error", "No subjects added")
+        return
+
+    total_marks = sum(total_marks_list)
+    obtained_marks_total = sum(obtained_marks)
+
+    if total_marks == 0:
+        messagebox.showerror("Input Error", "Total marks cannot be zero")
+        return
+
+    # Calculate the percentage
+    percentage = (obtained_marks_total / total_marks) * 100
+
+    result_label.config(text=f"Total Marks: {total_marks}\nObtained Marks: {obtained_marks_total}\nPercentage: {percentage:.2f}%")
+
+# Function to go back to the main page
+def back_to_main():
+    print("Back to main page")
+    open_main_page()
+
+# Main Page Layout Setup
+def open_main_page():
+    print("Opening main page...")
+    for widget in page_frame.winfo_children():
+        widget.destroy()
+
+    label_title = tk.Label(page_frame, text="Welcome to Unit Converter and Percentage Calculator", font=("Arial", 18, "bold"))
+    label_title.grid(row=0, column=0, columnspan=4, pady=20)
+
+    # Buttons to navigate to different pages
+    unit_converter_button = tk.Button(page_frame, text="Unit Converter", font=("Arial", 14), width=20, height=2, command=open_unit_converter)
+    unit_converter_button.grid(row=1, column=0, columnspan=4, pady=10)
+
+    student_calculator_button = tk.Button(page_frame, text="SPC", font=("Arial", 14), width=20, height=2, command=open_student_calculator)
+    student_calculator_button.grid(row=2, column=0, columnspan=4, pady=10)
+
+# Student Percentage Calculator Page Layout Setup
+def open_student_calculator():
+    print("Opening student calculator page...")
+    for widget in page_frame.winfo_children():
+        widget.destroy()
+
+    # Title Label for Student Calculator
+    label_title = tk.Label(page_frame, text="Student Percentage Calculator", font=("Arial", 18, "bold"))
+    label_title.grid(row=0, column=0, columnspan=4, pady=20)
+
+    # Subject and Marks Entry fields
+    global subject_entry, marks_entry, total_marks_entry
+    subject_entry = tk.Entry(page_frame, font=("Arial", 16), width=20, borderwidth=2, relief="solid", justify="right")
+    subject_entry.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+
+    marks_entry = tk.Entry(page_frame, font=("Arial", 16), width=20, borderwidth=2, relief="solid", justify="right")
+    marks_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+
+    total_marks_entry = tk.Entry(page_frame, font=("Arial", 16), width=20, borderwidth=2, relief="solid", justify="right")
+    total_marks_entry.grid(row=1, column=2, padx=10, pady=10, sticky="ew")
+
+    # Button to add subject and marks to the list
+    add_button = tk.Button(page_frame, text="Add Subject", font=("Arial", 14), width=20, height=2, command=add_subject)
+    add_button.grid(row=2, column=0, columnspan=3, pady=10)
+
+    # Listbox to display subjects and marks
+    global subject_listbox
+    subject_listbox = tk.Listbox(page_frame, font=("Arial", 14), height=5, width=40, selectmode=tk.SINGLE)
+    subject_listbox.grid(row=3, column=0, columnspan=3, padx=10, pady=10)
+
+    # Button to remove selected subject and marks
+    remove_button = tk.Button(page_frame, text="Remove Subject", font=("Arial", 14), width=20, height=2, command=remove_subject)
+    remove_button.grid(row=4, column=0, columnspan=3, pady=10)
+
+    # Button to calculate percentage
+    calculate_button = tk.Button(page_frame, text="Calculate Percentage", font=("Arial", 14), width=20, height=2, command=calculate_percentage)
+    calculate_button.grid(row=5, column=0, columnspan=3, pady=10)
+
+    # Label to display the result
+    global result_label
+    result_label = tk.Label(page_frame, text="Total Marks: 0\nObtained Marks: 0\nPercentage: 0.00%", font=("Arial", 14), justify="center")
+    result_label.grid(row=6, column=0, columnspan=3, pady=10)
+
+    # Back to Main Page Button
+    back_button = tk.Button(page_frame, text="Back to Main", font=("Arial", 14), width=20, height=2, command=back_to_main)
+    back_button.grid(row=7, column=0, columnspan=3, pady=20)
+
+    # Initialize lists to store subjects and marks
+    global subjects, obtained_marks, total_marks_list
+    subjects = []
+    obtained_marks = []
+    total_marks_list = []
+
+# Unit Converter Page Layout Setup
+def open_unit_converter():
+    print("Opening unit converter page...")
+    for widget in page_frame.winfo_children():
+        widget.destroy()
+
+    # Title Label for Unit Converter
+    label_title = tk.Label(page_frame, text="Unit Converter", font=("Arial", 18, "bold"))
+    label_title.grid(row=0, column=0, columnspan=4, pady=20)
+
+    # Length Conversion Input fields
+    length_label = tk.Label(page_frame, text="Enter Length:", font=("Arial", 14))
+    length_label.grid(row=1, column=0, pady=10)
+    global length_entry
+    length_entry = tk.Entry(page_frame, font=("Arial", 14), width=20)
+    length_entry.grid(row=1, column=1, pady=10)
+
+    # Dropdown menus for unit selection
+    global unit_from_var, unit_to_var
+    unit_from_var = tk.StringVar()
+    unit_to_var = tk.StringVar()
+
+    unit_from_var.set("Meters")  # Default value
+    unit_to_var.set("Kilometers")  # Default value
+
+    unit_from_menu = tk.OptionMenu(page_frame, unit_from_var, "Meters", "Kilometers", "Centimeters", "Millimeters", "Inches", "Feet", "Yards")
+    unit_from_menu.grid(row=2, column=0)
+
+    unit_to_menu = tk.OptionMenu(page_frame, unit_to_var, "Meters", "Kilometers", "Centimeters", "Millimeters", "Inches", "Feet", "Yards")
+    unit_to_menu.grid(row=2, column=1)
+
+    # Button to convert length
+    length_button = tk.Button(page_frame, text="Convert", font=("Arial", 14), width=20, height=2, command=convert_length)
+    length_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+    # Label for result
+    global result_label_converter
+    result_label_converter = tk.Label(page_frame, text="Conversion Result: ", font=("Arial", 14))
+    result_label_converter.grid(row=4, column=0, columnspan=2, pady=10)
+
+    # Back to Main Page Button
+    back_button = tk.Button(page_frame, text="Back to Main", font=("Arial", 14), width=20, height=2, command=back_to_main)
+    back_button.grid(row=5, column=0, columnspan=2, pady=20)
+
+# Length Conversion Function
+def convert_length():
+    try:
+        # Get the user input value for conversion
+        value = float(length_entry.get())
+        
+        # Get the selected units for conversion
+        from_unit = unit_from_var.get()
+        to_unit = unit_to_var.get()
+
+        # Conversion factors dictionary
+        conversion_factors = {
+            ("Meters", "Kilometers"): 0.001,
+            ("Kilometers", "Meters"): 1000,
+            ("Meters", "Centimeters"): 100,
+            ("Centimeters", "Meters"): 0.01,
+            ("Meters", "Millimeters"): 1000,
+            ("Millimeters", "Meters"): 0.001,
+            ("Meters", "Inches"): 39.3701,
+            ("Inches", "Meters"): 0.0254,
+            ("Meters", "Feet"): 3.28084,
+            ("Feet", "Meters"): 0.3048,
+            ("Meters", "Yards"): 1.09361,
+            ("Yards", "Meters"): 0.9144,
+            ("Centimeters", "Millimeters"): 10,
+            ("Millimeters", "Centimeters"): 0.1,
+            ("Centimeters", "Inches"): 0.393701,
+            ("Inches", "Centimeters"): 2.54,
+            ("Centimeters", "Feet"): 0.0328084,
+            ("Feet", "Centimeters"): 30.48,
+            ("Centimeters", "Yards"): 0.0109361,
+            ("Yards", "Centimeters"): 91.44,
+            ("Millimeters", "Inches"): 0.0393701,
+            ("Inches", "Millimeters"): 25.4,
+            ("Millimeters", "Feet"): 0.00328084,
+            ("Feet", "Millimeters"): 304.8,
+            ("Millimeters", "Yards"): 0.00109361,
+            ("Yards", "Millimeters"): 914.4,
+            ("Inches", "Feet"): 0.0833333,
+            ("Feet", "Inches"): 12,
+            ("Inches", "Yards"): 0.0277778,
+            ("Yards", "Inches"): 36,
+            ("Feet", "Yards"): 0.333333,
+            ("Yards", "Feet"): 3,
+            ("Yards", "Kilometers"): 0.0009144,
+            ("Kilometers", "Yards"): 1093.61
+        }
+        
+        # Perform the conversion
+        factor = conversion_factors.get((from_unit, to_unit))
+        if factor:
+            result = value * factor
+            result_label_converter.config(text=f"Conversion Result: {result} {to_unit.lower()}")
+        else:
+            result_label_converter.config(text="Conversion not available")
+    
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter a valid number for length.")
+
+# Set up the Tkinter window
+root = tk.Tk()
+root.title("Student Percentage Calculator & Unit Converter")
+root.geometry("800x800")  # Adjust size to fit larger screen
+root.resizable(True, True)
+
+# Set the main font and color scheme
+root.option_add("*Font", "Arial 12")
+root.config(bg="#f0f0f0")
+
+# Create a Frame for the main page
+frame = tk.Frame(root, bg="#f0f0f0")
+frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+# Create a page_frame to center the content of each page
+page_frame = tk.Frame(frame, bg="#ffffff", bd=5, relief="solid")
+page_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+# Open the main page when the application starts
+open_main_page()
+
+# Run the Tkinter event loop
+root.mainloop()
