@@ -4,6 +4,7 @@ Here before it was a plain percentage calulator:
 ![Student grade tracker py - Visual Studio Code 21-10-2024 14_46_49](https://github.com/user-attachments/assets/7a75005b-878f-42ce-9059-3724be1b36f0)
 
 After some changes using AI this is the result Extra- (Added unit converter) :
+
 Main Page-
 ![Screenshot 2025-04-27 234300](https://github.com/user-attachments/assets/e5cb5559-de86-4a31-8d64-636412b6a2f8)
 
